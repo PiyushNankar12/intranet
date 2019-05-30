@@ -113,6 +113,10 @@ class User
 
   def is_admin_or_hr?
     [ROLE[:HR], ROLE[:admin]].include?(role)
+  end
+
+  def is_intern?(role)
+    [ROLE[:intern]].include?(role)
   end  
 
   def allow_in_listing?
@@ -199,18 +203,23 @@ class User
     Project.in(id: project_ids)
   end
 
-  def associate_employee_id
-    return if self.role.eql?(INTERN_ROLE)
+  def calculate_next_employee_id
     employee_id_array = User.distinct("employee_detail.employee_id")
-    emp_id = employee_id_array.empty? ?  0 : employee_id_array.map{|id| id.to_i}.max
+    emp_id = employee_id_array.empty? ?  0 : employee_id_array.map(&:to_i).max
     emp_id = emp_id + 1
-    self.employee_detail.present? ?  self.employee_detail.update_attributes(employee_id: emp_id) : self.employee_detail = EmployeeDetail.new(employee_id: emp_id)
+  end
+
+  def associate_employee_id
+    return if is_intern?(role)
+    emp_id = calculate_next_employee_id
+    self.employee_detail.present? ?  self.employee_detail.employee_id = emp_id : self.employee_detail = EmployeeDetail.new(employee_id: emp_id)
   end
 
   def associate_employee_id_if_role_changed
     if role_changed?
-      if role_was ==  INTERN_ROLE && self.employee_detail.employee_id.nil?
-        associate_employee_id
+      if is_intern?(role_was)
+        emp_id = calculate_next_employee_id
+        self.employee_detail.update_attributes(employee_id: emp_id)
       end
     end
   end

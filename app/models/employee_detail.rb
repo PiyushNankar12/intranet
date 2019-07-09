@@ -8,11 +8,9 @@ class EmployeeDetail
   field :date_of_relieving, :type => Date
   field :notification_emails, type: Array
   field :available_leaves, type: Integer, default: 0
-  field :designation, type: String
   field :description
 
-  DESIGNATIONS = ["Co-Founder & Director", "Director", "Director Engineering" , "Software Architect", "Team Lead","Operations Head",
-                  "Senior QA & Developer", "Senior Software Engineer","Senior Accountant", "HR Executive", "Android Developer", "Software Engineer", "iOS Developer", "People & Culture Manager"]
+  belongs_to :designation
 
   validates :employee_id, uniqueness: true
   validates :available_leaves, numericality: {greater_than_or_equal_to: 0}

@@ -1,7 +1,7 @@
 = simple_form_for(@user,:url => user_path(@user), :html => { method: :put, class: "form-horizontal", multipart: true}) do |f|
   = f.simple_fields_for :employee_detail do |e|
     = e.input :employee_id, label: "Employee Id"
-    = e.input :designation, collection: EmployeeDetail::DESIGNATIONS, prompt: 'Select Designation'
+    = e.input :designation, as: :select, collection: Designation.all, prompt: 'Select Designation', selected: @user.designation.id
     = e.input :description, as: :text, input_html: {class: 'text-description'}
     = e.input :date_of_relieving, input_html: {class: 'datepicker', 'data-behaviour' => 'datepicker', value: @user.employee_detail.date_of_relieving.try(:strftime, '%d-%m-%Y')}
     = e.input :notification_emails, collection: @emails, input_html: {class: 'notification_emails', multiple: true, style: "width:240px;", "data-placeholder" => "You can add multiple emails"}

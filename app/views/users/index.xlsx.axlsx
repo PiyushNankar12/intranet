@@ -5,6 +5,6 @@ wb.add_worksheet(name: "Employees") do |sheet|
   counter = 0
   @usersxls.each do |user|
     counter += 1
-    sheet.add_row [counter, user.employee_id, user.name, user.email, user.role, user.designation.name, user.status, user.mobile_number, user.date_of_birth,  user.date_of_joining, user.date_of_relieving]
+    sheet.add_row [counter, user.employee_id, user.name, user.email, user.role, user.designation.try(:name), user.status, user.mobile_number, user.date_of_birth,  user.date_of_joining, user.date_of_relieving]
   end
 end

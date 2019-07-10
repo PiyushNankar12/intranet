@@ -6,10 +6,17 @@ namespace :add_association_designation do
     [:environment, :add_default_designations] do
     file = "#{Rails.root}/tmp/employee_data.csv"
     CSV.open(file, 'r', headers: true).each do |reader|
-      user = User.find(reader['User ID'])
+      employee_detail = EmployeeDetail.find(reader['EmployeeDetail ID'])
       designation = Designation.find_by(name: reader['Designation'])
-      user.designation = designation
-      user.save
+      employee_detail.designation = designation
+      employee_detail.save!
+    end
+    CSV.open(file, 'r', headers: true).each do |reader|
+      emp_det = EmployeeDetail.find(reader['EmployeeDetail ID'])
+      desg    = Designation.find_by(name: reader['Designation'])
+      if emp_det.designation_id.blank? || (emp_det.designation != desg)
+        puts "Invalid designation assigned to employee detail #{emp_det.id}"
+      end
     end
   end
 

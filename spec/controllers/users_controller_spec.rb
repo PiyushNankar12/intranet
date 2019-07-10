@@ -119,6 +119,21 @@ describe UsersController do
       patch :update, id: user.id, user: { project_ids: project_ids }
       expect(flash[:error]).to be_present
     end
+
+    it 'should update designation successfully' do
+      designations = FactoryGirl.create_list(:designation, 2)
+      employee_detail = user.employee_detail
+      employee_detail.designation = designations[0]
+      employee_detail.save
+      put :update, id: user.id, user: {
+        employee_detail_attributes: {
+          designation: designations[1],
+          id: employee_detail.id
+        }
+      }
+      expect(flash[:notice]).to be_present
+      expect(user.reload.designation).to eq(designations[1])
+    end
   end
 
   context "get_feed" do
